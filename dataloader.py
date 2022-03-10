@@ -71,7 +71,6 @@ def dataloader(filename):
 
     df_dev = pd.DataFrame(data=dev_data, columns=column_name)
     df_test = pd.DataFrame(data=test_data, columns=column_name)
-    # df_dev.iloc[100000: 100100].to_csv("df_dev_100.csv") 
     return df_dev, df_test
 
 if __name__ == "__main__":
