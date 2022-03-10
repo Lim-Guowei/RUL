@@ -40,7 +40,7 @@ def predict(filename, result_dir):
     df_test = df_test.drop(columns=["fan_eff_mod", "fan_flow_mod", "LPC_eff_mod", "LPC_flow_mod", "HPC_eff_mod", "HPC_flow_mod", "HPT_flow_mod", "LPT_eff_mod", "LPT_flow_mod", "cycle"])
     Y_true = df_test["RUL"].values
     
-    df_test_features = df_test.drop(["RUL"], axis=1)
+    df_test_features = df_test.drop(["RUL"], axis=1).values
     clf = joblib.load(os.path.normpath(os.path.join(result_dir, "model.pkl")))
     
     startTime = time.time()

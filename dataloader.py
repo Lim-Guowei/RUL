@@ -71,6 +71,7 @@ def dataloader(filename):
 
     df_dev = pd.DataFrame(data=dev_data, columns=column_name)
     df_test = pd.DataFrame(data=test_data, columns=column_name)
+    print(df_dev.shape)
     return df_dev, df_test
 
 if __name__ == "__main__":
