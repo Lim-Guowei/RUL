@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def Dataloader(filename):
+def dataloader(filename):
     dirname = "Dataset"
     filepath = os.path.normpath(os.path.join(os.path.join(os.getcwd(), dirname), filename))
 
@@ -52,9 +52,9 @@ def Dataloader(filename):
     column_name = W_var + X_s_var + X_v_var + T_var + A_var
     column_name.append("RUL")
 
-    print("dev_data shape: {}".format(dev_data.shape))
-    print("test_data shape: {}".format(test_data.shape))
-    print("column_name shape: {}".format(len(column_name)))
+    # print("dev_data shape: {}".format(dev_data.shape))
+    # print("test_data shape: {}".format(test_data.shape))
+    # print("column_name shape: {}".format(len(column_name)))
     print("column_name: {}".format(column_name))
     
     # print ("W shape: " + str(W.shape))
@@ -72,15 +72,7 @@ def Dataloader(filename):
     df_dev = pd.DataFrame(data=dev_data, columns=column_name)
     df_test = pd.DataFrame(data=test_data, columns=column_name)
     # df_dev.iloc[100000: 100100].to_csv("df_dev_100.csv") 
-    # print(df_dev.tail(20))
-    # print(df_dev.shape)
-    # print(df_test.shape)
-
-    plt.figure()
-    plt.plot(df_dev["RUL"])
-    plt.show()
-    
     return df_dev, df_test
 
 if __name__ == "__main__":
-    Dataloader("N-CMAPSS_DS01-005.h5")
+    dataloader("N-CMAPSS_DS01-005.h5")

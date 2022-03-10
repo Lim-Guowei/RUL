@@ -1,3 +1,5 @@
 **/.vscode
 **/Dataset
-*.csv
+**/__pycache__
+**/.ipynb_checkpoints
+
