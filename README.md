@@ -11,6 +11,8 @@
 #### Data source (N-CMAPSS)
 - Link: ```https://ti.arc.nasa.gov/tech/dash/groups/pcoe/prognostic-data-repository/#turbofan-2```
   - 17. Turbofan Engine Degradation Simulation Data Set-2
+- Citation:
+  - M. Chao, C.Kulkarni, K. Goebel and O. Fink (2021). "Aircraft Engine Run-to-Failure Dataset under real flight conditions", NASA Ames Prognostics Data Repository (http://ti.arc.nasa.gov/project/prognostic-data-repository), NASA Ames Research Center, Moffett Field, CA
 - Description: 
   - The generation of data-driven prognostics models requires the availability of datasets with run-to-failure trajectories. In order to contribute to the development of these methods, the dataset provides a new realistic dataset of run-to-failure trajectories for a small fleet of aircraft engines under realistic flight conditions. The damage propagation modelling used for the generation of this synthetic dataset builds on the modeling strategy from previous work . The dataset was generated with the Commercial Modular Aero-Propulsion System Simulation (C-MAPSS) dynamical model. The data set is been provided by the Prognostics CoE at NASA Ames in collaboration with ETH Zurich and PARC.
 - Scope:
@@ -37,4 +39,4 @@
 7. Infer model and generate test score using predictor.py (model folder needs to exist in workspace before inference)
 
 #### Results
-- Methodology, analysis and results are summarized in **ds01_report.pptx**
+- Methodology, analysis and results are summarized in **ds01_report.pptx** and **ds01_report.pdf**

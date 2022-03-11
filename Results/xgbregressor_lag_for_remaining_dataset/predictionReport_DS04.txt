@@ -1,0 +1,2 @@
+RMSE using best estimator is 8.7607
+{"alpha": 3.3858990780312515, "copy_X": true, "fit_intercept": true, "max_iter": null, "normalize": "deprecated", "positive": false, "random_state": null, "solver": "auto", "tol": 0.001}

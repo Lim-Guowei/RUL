@@ -66,7 +66,7 @@ def predict(filename, result_dir, add_lag=False):
 
     fig = df_test.plot(y=["RUL", "RUL_predicted"], 
                         kind="line", 
-                        title="Ground truth vs Predicted for N-CMAPSS_DS01-005", 
+                        title="Ground truth vs Predicted for {}".format(filename), 
                         xlabel="index", 
                         use_index=True,
                         linewidth=1.0,
@@ -108,7 +108,7 @@ def predict_on_dev(filename, result_dir, add_lag=False):
 
     fig = df_dev.plot(y=["RUL", "RUL_predicted"], 
                         kind="line", 
-                        title="Ground truth vs Predicted for N-CMAPSS_DS01-005", 
+                        title="Ground truth vs Predicted for {}".format(filename), 
                         xlabel="index", 
                         use_index=True,
                         linewidth=1.0,
