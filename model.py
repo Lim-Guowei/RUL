@@ -35,7 +35,7 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         if  self.feature_names:
             return X[self.feature_names] 
 
-def model(filename, result_dir):
+def model(filename, result_dir, add_lag=False):
 
     cwd = os.getcwd()
     os.makedirs(os.path.normpath(os.path.join(cwd, result_dir)), exist_ok=True)
@@ -46,12 +46,19 @@ def model(filename, result_dir):
     #   "LPT_eff_mod", "LPT_flow_mod"] as they contain all zeroes values
     # - Remove column "cycle" as "RUL" is strongly correlated and is derived from it
     # - Remove column "unit" as test data does not contain units from dev data
+    # - Adding lag 1, 3 and 5 features on RUL value and treat time series as a regressive problem
     # - ["Fc", "hs"] are categorical features
     
     # Pre-processing based on EDA findings
     df_dev, _ = dataloader(filename)
     df_dev = df_dev.drop(columns=["fan_eff_mod", "fan_flow_mod", "LPC_eff_mod", "LPC_flow_mod", "HPC_eff_mod", "HPC_flow_mod", "HPT_flow_mod", "LPT_eff_mod", "LPT_flow_mod", "cycle", "unit"])
-    
+
+    if add_lag:
+        df_dev["RUL_lag1"] = df_dev["RUL"].shift(1)
+        df_dev["RUL_lag3"] = df_dev["RUL"].shift(3)
+        df_dev["RUL_lag5"] = df_dev["RUL"].shift(5)
+        df_dev = df_dev.iloc[5::] # Discard NaN rows
+
     # Model training
     Y = df_dev["RUL"]
     X = df_dev.drop(["RUL"], axis=1)
@@ -78,19 +85,19 @@ def model(filename, result_dir):
                                                     ("categoricalPipeline", categoricalPipeline)
                                                     ])
 
-    if result_dir == "xgbregressor":
+    if result_dir in ["xgbregressor", "xgbregressor_lag"]:
         mainPipeline = Pipeline(steps=[
                                         ("mainPipeline", unionPipeline),
                                         ("model", XGBRegressor())   # Change model according to required model imported as shown in first few lines, # Remove random_state and verbose for GaussianNB
                                         ])
     
-    elif result_dir == "randomforestregressor":
+    elif result_dir in ["randomforestregressor", "randomforestregressor_lag"]:
         mainPipeline = Pipeline(steps=[
                                         ("mainPipeline", unionPipeline),
                                         ("model", RandomForestRegressor())   # Change model according to required model imported as shown in first few lines, # Remove random_state and verbose for GaussianNB
                                         ])
 
-    elif result_dir == "ridgeregressor":
+    elif result_dir in ["ridgeregressor", "ridgeregressor_lag"]:
         mainPipeline = Pipeline(steps=[
                                 ("mainPipeline", unionPipeline),
                                 ("model", Ridge())   # Change model according to required model imported as shown in first few lines, # Remove random_state and verbose for GaussianNB
@@ -118,13 +125,13 @@ def model(filename, result_dir):
                             }
 
     startTime = time.time()
-    if result_dir == "xgbregressor":
+    if result_dir in ["xgbregressor", "xgbregressor_lag"]:
         clf = RandomizedSearchCV(mainPipeline, param_distributions=paramsXGBoostRegressor, cv=5, scoring="neg_mean_squared_error", n_jobs=2 ,verbose=10, n_iter=3) # change param_distributions parameter according to fitted model
     
-    elif result_dir == "randomforestregressor":
+    elif result_dir in ["randomforestregressor", "randomforestregressor_lag"]:
         clf = RandomizedSearchCV(mainPipeline, param_distributions=paramsRandomForestRegressor, cv=5, scoring="neg_mean_squared_error", n_jobs=2 ,verbose=10, n_iter=3) # change param_distributions parameter according to fitted model
     
-    elif result_dir == "ridgeregressor":
+    elif result_dir in ["ridgeregressor", "ridgeregressor_lag"]:
         clf = RandomizedSearchCV(mainPipeline, param_distributions=paramsRidgeRegressor, cv=5, scoring="neg_mean_squared_error", n_jobs=2 ,verbose=10, n_iter=3) # change param_distributions parameter according to fitted model
     
     else:
@@ -149,7 +156,12 @@ def model(filename, result_dir):
     return
 
 if __name__ == "__main__":
-    # model("N-CMAPSS_DS01-005.h5", "xgbregressor")      
-    # model("N-CMAPSS_DS01-005.h5", "randomforestregressor")
+
+    model("N-CMAPSS_DS01-005.h5", "xgbregressor")      
+    model("N-CMAPSS_DS01-005.h5", "randomforestregressor")
     model("N-CMAPSS_DS01-005.h5", "ridgeregressor")                 
+
+    model("N-CMAPSS_DS01-005.h5", "xgbregressor_lag", add_lag=True)      
+    model("N-CMAPSS_DS01-005.h5", "randomforestregressor_lag", add_lag=True)
+    model("N-CMAPSS_DS01-005.h5", "ridgeregressor_lag", add_lag=True)                 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

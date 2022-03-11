@@ -35,11 +35,18 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         if  self.feature_names:
             return X[self.feature_names] 
 
-def predict(filename, result_dir):
+def predict(filename, result_dir, add_lag=False):
 
     _, df_test = dataloader(filename)
     df_test = df_test.drop(columns=["fan_eff_mod", "fan_flow_mod", "LPC_eff_mod", "LPC_flow_mod", "HPC_eff_mod", "HPC_flow_mod", 
                                     "HPT_flow_mod", "LPT_eff_mod", "LPT_flow_mod", "cycle", "unit"])
+    
+    if add_lag:
+        df_test["RUL_lag1"] = df_test["RUL"].shift(1)
+        df_test["RUL_lag3"] = df_test["RUL"].shift(3)
+        df_test["RUL_lag5"] = df_test["RUL"].shift(5)
+        df_test = df_test.iloc[5::] # Discard NaN rows
+
     Y_true = df_test["RUL"].values    
     df_test_features = df_test.drop(["RUL"], axis=1)
     clf = joblib.load(os.path.normpath(os.path.join(result_dir, "model.pkl")))
@@ -71,10 +78,16 @@ def predict(filename, result_dir):
     fig.savefig(os.path.normpath(os.path.join(result_dir, "predict.png")))
     return
 
-def predict_on_dev(filename, result_dir):
+def predict_on_dev(filename, result_dir, add_lag=False):
     df_dev, _ = dataloader(filename)
     df_dev = df_dev.drop(columns=["fan_eff_mod", "fan_flow_mod", "LPC_eff_mod", "LPC_flow_mod", "HPC_eff_mod", "HPC_flow_mod", 
                                     "HPT_flow_mod", "LPT_eff_mod", "LPT_flow_mod", "cycle", "unit"])
+
+    if add_lag:
+        df_dev["RUL_lag1"] = df_dev["RUL"].shift(1)
+        df_dev["RUL_lag3"] = df_dev["RUL"].shift(3)
+        df_dev["RUL_lag5"] = df_dev["RUL"].shift(5)
+        df_dev = df_dev.iloc[5::] # Discard NaN rows
 
     Y_true = df_dev["RUL"].values    
     df_dev_features = df_dev.drop(["RUL"], axis=1)
@@ -108,10 +121,18 @@ def predict_on_dev(filename, result_dir):
     return
 
 if __name__ == "__main__":
-    # predict("N-CMAPSS_DS01-005.h5", "xgbregressor")
-    # predict("N-CMAPSS_DS01-005.h5", "randomforestregressor")
-    # predict("N-CMAPSS_DS01-005.h5", "ridgeregressor")
+    predict("N-CMAPSS_DS01-005.h5", "xgbregressor")
+    predict("N-CMAPSS_DS01-005.h5", "randomforestregressor")
+    predict("N-CMAPSS_DS01-005.h5", "ridgeregressor")
 
-    # predict_on_dev("N-CMAPSS_DS01-005.h5", "xgbregressor")
+    predict_on_dev("N-CMAPSS_DS01-005.h5", "xgbregressor")
     predict_on_dev("N-CMAPSS_DS01-005.h5", "randomforestregressor")
     predict_on_dev("N-CMAPSS_DS01-005.h5", "ridgeregressor")
+
+    predict("N-CMAPSS_DS01-005.h5", "xgbregressor_lag", add_lag=True)
+    predict("N-CMAPSS_DS01-005.h5", "randomforestregressor_lag", add_lag=True)
+    predict("N-CMAPSS_DS01-005.h5", "ridgeregressor_lag", add_lag=True)
+
+    predict_on_dev("N-CMAPSS_DS01-005.h5", "xgbregressor_lag", add_lag=True)
+    predict_on_dev("N-CMAPSS_DS01-005.h5", "randomforestregressor_lag", add_lag=True)
+    predict_on_dev("N-CMAPSS_DS01-005.h5", "ridgeregressor_lag", add_lag=True)

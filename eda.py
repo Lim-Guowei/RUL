@@ -73,6 +73,27 @@ def rank_feature_importance(dataframe):
     plt.savefig("feature_importance.png")
     return
 
+def add_lag_features(dataframe):
+
+    dataframe["RUL_lag1"] = dataframe["RUL"].shift(1)
+    dataframe["RUL_lag3"] = dataframe["RUL"].shift(3)
+    dataframe["RUL_lag5"] = dataframe["RUL"].shift(5)
+    dataframe = dataframe.iloc[5::] # Discard NaN rows
+    
+    fig = dataframe.plot(y=["RUL", "RUL_lag1", "RUL_lag1", "RUL_lag3", "RUL_lag5"], 
+                            kind="line", 
+                            title="Lag on RUL variable", 
+                            xlabel="index", 
+                            use_index=True,
+                            linewidth=1.0,
+                            alpha=0.7,
+                            xlim=(0, dataframe.index.max()),
+                            figsize=(20, 15)
+                            ).get_figure()
+    
+    fig.savefig("lag_on_RUL.png")
+    return
+
 def eda(filename):
     df_dev, df_test = dataloader(filename)
     column_name = df_dev.columns.tolist()
@@ -101,6 +122,9 @@ def eda(filename):
 
     # Rank feature importance using random forest classifier
     rank_feature_importance(df_dev)
+
+    add_lag_features(df_dev)
+
     return
     
 if __name__ == "__main__":

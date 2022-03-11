@@ -13,7 +13,7 @@ def countUniqueVal(dataframe, column):
         print("\n")
     return
 
-def dataloader(filename):
+def dataloader(filename, save_description=False, print_description=False):
     dirname = "Dataset"
     filepath = os.path.normpath(os.path.join(os.path.join(os.getcwd(), dirname), filename))
 
@@ -49,63 +49,53 @@ def dataloader(filename):
         T_var = list(np.array(T_var, dtype='U20'))
         A_var = list(np.array(A_var, dtype='U20'))
 
-    # W = np.concatenate((W_dev, W_test), axis=0)  
-    # X_s = np.concatenate((X_s_dev, X_s_test), axis=0)
-    # X_v = np.concatenate((X_v_dev, X_v_test), axis=0)
-    # T = np.concatenate((T_dev, T_test), axis=0)
-    # Y = np.concatenate((Y_dev, Y_test), axis=0) 
-    # A = np.concatenate((A_dev, A_test), axis=0) 
+    if print_description:
+
+        W = np.concatenate((W_dev, W_test), axis=0)  
+        X_s = np.concatenate((X_s_dev, X_s_test), axis=0)
+        X_v = np.concatenate((X_v_dev, X_v_test), axis=0)
+        T = np.concatenate((T_dev, T_test), axis=0)
+        Y = np.concatenate((Y_dev, Y_test), axis=0) 
+        A = np.concatenate((A_dev, A_test), axis=0) 
+
+        print ("W shape: " + str(W.shape))
+        print ("X_s shape: " + str(X_s.shape))
+        print ("X_v shape: " + str(X_v.shape))
+        print ("T shape: " + str(T.shape))
+        print("Y shape: " + str(Y.shape))
+        print ("A shape: " + str(A.shape))
+        print("Variables in W_var: {}".format(W_var))
+        print("Variables in X_s_var: {}".format(X_s_var))
+        print("Variables in X_v_var: {}".format(X_v_var))
+        print("Variables in T_var: {}".format(T_var))
+        print("Variables in A_var: {}".format(A_var))
 
     dev_data = np.concatenate((W_dev, X_s_dev, X_v_dev, T_dev, A_dev, Y_dev), axis=1)
     test_data = np.concatenate((W_test, X_s_test, X_v_test, T_test, A_test, Y_test), axis=1)
     column_name = W_var + X_s_var + X_v_var + T_var + A_var
     column_name.append("RUL")
 
-    # print("dev_data shape: {}".format(dev_data.shape))
-    # print("test_data shape: {}".format(test_data.shape))
-    # print("column_name shape: {}".format(len(column_name)))
-    print("column_name: {}".format(column_name))
+    if print_description:
+        print("dev_data shape: {}".format(dev_data.shape))
+        print("test_data shape: {}".format(test_data.shape))
+        print("column_name shape: {}".format(len(column_name)))
+        print("column_name: {}".format(column_name))
     
-    # print ("W shape: " + str(W.shape))
-    # print ("X_s shape: " + str(X_s.shape))
-    # print ("X_v shape: " + str(X_v.shape))
-    # print ("T shape: " + str(T.shape))
-    # print("Y shape: " + str(Y.shape))
-    # print ("A shape: " + str(A.shape))
-    # print("Variables in W_var: {}".format(W_var))
-    # print("Variables in X_s_var: {}".format(X_s_var))
-    # print("Variables in X_v_var: {}".format(X_v_var))
-    # print("Variables in T_var: {}".format(T_var))
-    # print("Variables in A_var: {}".format(A_var))
-
     df_dev = pd.DataFrame(data=dev_data, columns=column_name)
     df_test = pd.DataFrame(data=test_data, columns=column_name)
-    print(df_dev.shape)
     
-    # print(df_test["unit"].describe())
-    countUniqueVal(df_test, ["unit"])
-    # print(df_test.shape)
-
-    # df_dev = df_dev.loc[df_dev["unit"] == 1.0]
-
-    # print(df_dev)
-    # print(df_dev.shape)
-
-    # fig = df_dev.plot(y=["RUL"], 
-    #                 kind="line", 
-    #                 title="Ground truth vs Predicted for N-CMAPSS_DS01-005", 
-    #                 xlabel="index", 
-    #                 use_index=True,
-    #                 linewidth=1.0,
-    #                 alpha=0.7,
-    #                 xlim=(0, df_test.index.max()),
-    #                 figsize=(20, 15)
-    #                 ).get_figure()
-
-    # plt.show()
-
+    if print_description and save_description:
+        with open("dataset_info.txt", "w+") as f:
+            f.write("\ndf_dev shape: {}".format(df_dev.shape))
+            f.write("\ndf_test shape: {}".format(df_test.shape))
+            f.write("\ncolumn_name: {}".format(column_name))
+            f.write("\nVariables in W_var: {}".format(W_var))
+            f.write("\nVariables in X_s_var: {}".format(X_s_var))
+            f.write("\nVariables in X_v_var: {}".format(X_v_var))
+            f.write("\nVariables in T_var: {}".format(T_var))
+            f.write("\nVariables in A_var: {}".format(A_var))
 
     return df_dev, df_test
 
 if __name__ == "__main__":
-    dataloader("N-CMAPSS_DS01-005.h5")
+    dataloader("N-CMAPSS_DS01-005.h5", save_description=True, print_description=True)
