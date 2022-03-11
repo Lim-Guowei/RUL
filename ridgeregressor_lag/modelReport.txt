@@ -1,2 +1,0 @@
-RMSE using best estimator is 0.9918
-Time taken for computation is 68.2248s

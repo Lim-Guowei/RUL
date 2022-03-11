@@ -39,4 +39,4 @@
 7. Infer model and generate test score using predictor.py (model folder needs to exist in workspace before inference)
 
 #### Results
-- Methodology, analysis and results are summarized in **ds01_report.pptx** and **ds01_report.pdf**
+- Methodology, analysis and results are summarized in **ds01_report.pdf** and **ds01_report.pptx**
