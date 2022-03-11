@@ -4,6 +4,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+def countUniqueVal(dataframe, column):
+    """ Print unique values for each columns
+    """
+    for count, name in enumerate(column):
+        print("#{} - {}".format(count, name))
+        print(dataframe[name].value_counts())
+        print("\n")
+    return
+
 def dataloader(filename):
     dirname = "Dataset"
     filepath = os.path.normpath(os.path.join(os.path.join(os.getcwd(), dirname), filename))
@@ -72,6 +81,30 @@ def dataloader(filename):
     df_dev = pd.DataFrame(data=dev_data, columns=column_name)
     df_test = pd.DataFrame(data=test_data, columns=column_name)
     print(df_dev.shape)
+    
+    # print(df_test["unit"].describe())
+    countUniqueVal(df_test, ["unit"])
+    # print(df_test.shape)
+
+    # df_dev = df_dev.loc[df_dev["unit"] == 1.0]
+
+    # print(df_dev)
+    # print(df_dev.shape)
+
+    # fig = df_dev.plot(y=["RUL"], 
+    #                 kind="line", 
+    #                 title="Ground truth vs Predicted for N-CMAPSS_DS01-005", 
+    #                 xlabel="index", 
+    #                 use_index=True,
+    #                 linewidth=1.0,
+    #                 alpha=0.7,
+    #                 xlim=(0, df_test.index.max()),
+    #                 figsize=(20, 15)
+    #                 ).get_figure()
+
+    # plt.show()
+
+
     return df_dev, df_test
 
 if __name__ == "__main__":
